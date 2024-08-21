@@ -32,6 +32,14 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .pagination-container {
+            margin-top: 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            background-color: #e9ecef;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
     </style>
 </head>
 <body>
@@ -43,20 +51,24 @@
     </div>
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="add-details-tab" data-bs-toggle="tab" data-bs-target="#add-details" type="button" role="tab" aria-controls="add-details" aria-selected="true">Add Details</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="bulk-upload-tab" data-bs-toggle="tab" data-bs-target="#bulk-upload" type="button" role="tab" aria-controls="bulk-upload" aria-selected="false">Bulk Upload</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="manage-plates-tab" data-bs-toggle="tab" data-bs-target="#manage-plates" type="button" role="tab" aria-controls="manage-plates" aria-selected="false">Manage Plates</button>
-        </li>
+        <!-- Inside the <ul class="nav nav-tabs"> -->
+		<li class="nav-item">
+			<a href="{{ url_for('main_page', cid=cid, active_tab='add-details') }}"
+			class="nav-link {% if active_tab == 'add-details' %}active{% endif %}">Add Details</a>
+		</li>
+		<li class="nav-item">
+			<a href="{{ url_for('main_page', cid=cid, active_tab='bulk-upload') }}"
+			class="nav-link {% if active_tab == 'bulk-upload' %}active{% endif %}">Bulk Upload</a>
+		</li>
+		<li class="nav-item">
+			<a href="{{ url_for('main_page', cid=cid, active_tab='manage-plates') }}"
+				class="nav-link {% if active_tab == 'manage-plates' %}active{% endif %}">Manage Plates</a>
+		</li>
     </ul>
 
     <div class="tab-content" id="myTabContent">
         <!-- Add Details Tab -->
-        <div class="tab-pane fade show active" id="add-details" role="tabpanel" aria-labelledby="add-details-tab">
+        <div class="tab-pane fade {% if active_tab == 'add-details' %}show active{% endif %}" id="add-details" role="tabpanel" aria-labelledby="add-details-tab">
             <form method="POST" action="/main/{{ cid }}">
                 <input type="hidden" name="add_user" value="true">
                 <div class="mb-3">
@@ -85,7 +97,7 @@
         </div>
 
         <!-- Bulk Upload Tab -->
-        <div class="tab-pane fade" id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
+        <div class="tab-pane fade {% if active_tab == 'bulk-upload' %}show active{% endif %}" id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
             <form method="POST" action="/main/{{ cid }}" enctype="multipart/form-data">
                 <input type="hidden" name="bulk_upload" value="true">
                 <div class="mb-3">
@@ -106,8 +118,15 @@
         </div>
 
         <!-- Manage Plates Tab -->
-        <div class="tab-pane fade" id="manage-plates" role="tabpanel" aria-labelledby="manage-plates-tab">
+        <div class="tab-pane fade {% if active_tab == 'manage-plates' %}show active{% endif %}" id="manage-plates" role="tabpanel" aria-labelledby="manage-plates-tab">
             <h3>Manage Number Plates</h3>
+            <form method="GET" action="/main/{{ cid }}" class="mb-3">
+				<div class="input-group">
+					<input type="text" class="form-control" name="search" placeholder="Search by number plate, name, or phone number" value="{{ search_query }}">
+					<button type="submit" class="btn btn-primary">Search</button>
+				</div>
+				<input type="hidden" name="active_tab" value="manage-plates">
+			</form>
             <table class="table">
                 <thead>
                     <tr>
@@ -126,12 +145,36 @@
                         <td>{{ plate[3] }}</td>
                         <td>{{ plate[4] }}</td>
                         <td>
+                            <a href="{{ url_for('edit_plate', plate_id=plate[2]) }}" class="btn btn-warning btn-sm">Edit</a>
                             <a href="{{ url_for('delete_plate', plate_id=plate[2]) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this plate?');">Delete</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <nav aria-label="Page navigation" class="pagination-container">
+                <ul class="pagination">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main_page', cid=cid, search=search_query, page=page-1, active_tab='manage-plates') }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% for p in range(1, total_pages + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('main_page', cid=cid, search=search_query, page=p, active_tab='manage-plates') }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main_page', cid=cid, search=search_query, page=page+1, active_tab='manage-plates') }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
