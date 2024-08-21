@@ -27,6 +27,16 @@
             margin-top: 10px;
             margin-bottom: 15px;
         }
+        .forgot-password-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +63,7 @@
         {% endwith %}
         <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
+    <a href="{{ url_for('forgot_password') }}" class="forgot-password-link">Forgot Password?</a>
 </div>
 
 </body>
