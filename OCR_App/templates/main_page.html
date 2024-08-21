@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .tab-content {
+            margin-top: 20px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .success-message {
+            color: #28a745;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .company-name {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="/logout" class="btn btn-secondary logout-button">Logout</a>
+    <div class="company-name">
+        <h2>{{ company_name }}</h2>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="add-details-tab" data-bs-toggle="tab" data-bs-target="#add-details" type="button" role="tab" aria-controls="add-details" aria-selected="true">Add Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="bulk-upload-tab" data-bs-toggle="tab" data-bs-target="#bulk-upload" type="button" role="tab" aria-controls="bulk-upload" aria-selected="false">Bulk Upload</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="manage-plates-tab" data-bs-toggle="tab" data-bs-target="#manage-plates" type="button" role="tab" aria-controls="manage-plates" aria-selected="false">Manage Plates</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <!-- Add Details Tab -->
+        <div class="tab-pane fade show active" id="add-details" role="tabpanel" aria-labelledby="add-details-tab">
+            <form method="POST" action="/main/{{ cid }}">
+                <input type="hidden" name="add_user" value="true">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="np" class="form-label">Number Plate</label>
+                    <input type="text" class="form-control" id="np" name="np" required>
+                </div>
+                <div class="mb-3">
+                    <label for="pno" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="pno" name="pno" required>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <div class="{% if category == 'error' %}error-message{% else %}success-message{% endif %}">
+                      {% for category, message in messages %}
+                        <div>{{ message }}</div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endwith %}
+                <button type="submit" class="btn btn-primary w-100">Add Details</button>
+            </form>
+        </div>
+
+        <!-- Bulk Upload Tab -->
+        <div class="tab-pane fade" id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
+            <form method="POST" action="/main/{{ cid }}" enctype="multipart/form-data">
+                <input type="hidden" name="bulk_upload" value="true">
+                <div class="mb-3">
+                    <label for="upload_excel" class="form-label">Upload Excel</label>
+                    <input type="file" class="form-control" id="upload_excel" name="upload_excel" accept=".xls,.xlsx" required>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <div class="{% if category == 'error' %}error-message{% else %}success-message{% endif %}">
+                      {% for category, message in messages %}
+                        <div>{{ message }}</div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endwith %}
+                <button type="submit" class="btn btn-primary w-100">Upload</button>
+            </form>
+        </div>
+
+        <!-- Manage Plates Tab -->
+        <div class="tab-pane fade" id="manage-plates" role="tabpanel" aria-labelledby="manage-plates-tab">
+            <h3>Manage Number Plates</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Number Plate</th>
+                        <th>Phone Number</th>
+                        <th>Date Added</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plate in plates %}
+                    <tr>
+                        <td>{{ plate[1] }}</td>
+                        <td>{{ plate[2] }}</td>
+                        <td>{{ plate[3] }}</td>
+                        <td>{{ plate[4] }}</td>
+                        <td>
+                            <a href="{{ url_for('delete_plate', plate_id=plate[2]) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this plate?');">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
