@@ -8,7 +8,7 @@ The Number Plate Recognition System is a project designed to recognize vehicle n
 
 The project is organized into the following main components:
 
-### 1. Database Setup (`Number_plate_DB/`)
+### 1. Database Setup (`Number_plate_DB.ipynb`)
 
 This component involves setting up a MySQL database to store information about companies and their associated number plates. The database consists of two main tables:
 
@@ -23,17 +23,14 @@ A Flask-based web application that allows companies to log in, add, manage, and 
 - **Dashboard** for managing number plate entries.
 - **Templates and static files** for rendering the web pages.
 
-### 3. OCR Model (`OCR_CNN_Model/`)
+### 3. OCR Model (`OCR_CNN_Model.ipynb`)
 
 This module contains the code for a TensorFlow-based CNN model that recognizes alphanumeric characters from number plate images. The model is trained on a dataset of characters and is used for identifying text in the number plate images.
 
-### 4. Number Plate Processing (`Numberplate_processing/`)
+### 4. Number Plate Processing (`Number_plate_detection.ipynb`)
 
 This component is responsible for processing images of number plates. It extracts the plate from the image, recognizes individual characters using the trained CNN model, and checks if the recognized number plate exists in the database.
 
-### 5. Utility Functions (`utils/`)
-
-Helper functions for database operations, including connecting to the database, executing SQL queries, and fetching data.
 
 ## How It Works
 
