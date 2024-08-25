@@ -16,10 +16,10 @@ app.secret_key = 'your_secret_key'
 
 def send_otp_email(to_email, otp):
     try:
-        smtp_server = 'smtp-mail.outlook.com'  # Update with your SMTP server
+        smtp_server = 'Email.outlook.com'  # Update with your SMTP server
         smtp_port = 587  # Update if different
         smtp_user = 'numberplate22@outlook.com'  # Update with your email
-        smtp_password = 'NP123456'
+        smtp_password = 'Your_Password'
 
         # Construct the email message
         subject = 'Password Reset OTP'
